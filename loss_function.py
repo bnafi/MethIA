@@ -14,7 +14,7 @@ import numpy as np
 import PIL.Image
 import time
 import functools
-
+import aux_loss_function
 """
 This File is used to compute the Loss Function for our Deep Convolutional Neural Network. 
 
@@ -23,41 +23,38 @@ because it is difficult to define the Style and Content of an image. The idea is
 Network pretrained for image classification (VGG19) in ImageNet dataset. With some intermediate layers outputs,
 we are able to extract some high-level (Content) and low-level (Style) from the image to compute image statistics.
 
-We can obtain this pretrained CNN from tf.keras. 
+We use methods from aux_loss_functions to compute the loss.
 """
-def vgg_layers_names():
 
-    """This function is only informative to extract the names of the VGG19 Layers"""
-    #We will not use the last activation function because we do not want to do classification, only use intermediate layers.
-    vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
-    print("VGG19 Layers: ")
-    for layer in vgg.layers:
-        print(layer.name)
+class StyleContentModel(tf.keras.models.Model):
+  """
+  We create a Class that inherits from models of keras. For the initialization we have to provide 
+  """
+  def __init__(self, style_layers, content_layers):
+    super(StyleContentModel, self).__init__()
+    self.vgg = aux_loss_function.vgg_layers(style_layers + content_layers)
+    self.style_layers = style_layers
+    self.content_layers = content_layers
+    self.num_style_layers = len(style_layers)
+    self.vgg.trainable = False
 
-def vgg_layers(layer_names):
-  """ Given the layer_names, it loads a VGG19 network and it will return the output of the layer_names."""
-  # Load our model. Load pretrained VGG, trained on imagenet data
-  vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
-  vgg.trainable = False
+  def call(self, inputs):
+    "Expects float input in [0,1]"
+    inputs = inputs*255.0
+    preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
+    outputs = self.vgg(preprocessed_input)#It is the style and content extractor
+    style_outputs, content_outputs = (outputs[:self.num_style_layers],
+                                      outputs[self.num_style_layers:])
 
-  outputs = [vgg.get_layer(name).output for name in layer_names]
+    style_outputs = [aux_loss_function.gram_matrix(style_output)
+                     for style_output in style_outputs]
 
-  model = tf.keras.Model([vgg.input], outputs)
-  return model
+    content_dict = {content_name: value
+                    for content_name, value
+                    in zip(self.content_layers, content_outputs)}
 
+    style_dict = {style_name: value
+                  for style_name, value
+                  in zip(self.style_layers, style_outputs)}
 
-def vgg_layers_stat(style_image, style_layers):
-    """
-    This 
-    """
-    style_extractor = vgg_layers(style_layers)
-    style_outputs = style_extractor(style_image*255)
-
-#Look at the statistics of each layer's output
-    for name, output in zip(style_layers, style_outputs):
-        print(name)
-        print("  shape: ", output.numpy().shape)
-        print("  min: ", output.numpy().min())
-        print("  max: ", output.numpy().max())
-        print("  mean: ", output.numpy().mean())
-        print()
+    return {'content': content_dict, 'style': style_dict}
