@@ -16,6 +16,8 @@ import time
 import functools
 import utils
 import loss_function
+import gradient_descent
+import image_statistics
 
 content_path = tf.keras.utils.get_file('YellowLabradorLooking_new.jpg', 'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg')
 style_path = tf.keras.utils.get_file('kandinsky5.jpg','https://storage.googleapis.com/download.tensorflow.org/example_images/Vassily_Kandinsky%2C_1913_-_Composition_7.jpg')
@@ -29,23 +31,10 @@ style_layers = ['block1_conv1',
                 'block5_conv1']
 content_layers = ['block5_conv2']
 #loss_function.vgg_layers_stat(style_image, style_layers)
-extractor = loss_function.StyleContentModel(style_layers, content_layers)
-
+extractor = image_statistics.StyleContentModel(style_layers, content_layers)
 results = extractor(tf.constant(content_image))
+extractor = image_statistics.StyleContentModel(style_layers, content_layers)
+style_targets = extractor(style_image)['style']
+content_targets = extractor(content_image)['content']
 
-print('Styles:')
-for name, output in sorted(results['style'].items()):
-  print("  ", name)
-  print("    shape: ", output.numpy().shape)
-  print("    min: ", output.numpy().min())
-  print("    max: ", output.numpy().max())
-  print("    mean: ", output.numpy().mean())
-  print()
-
-print("Contents:")
-for name, output in sorted(results['content'].items()):
-  print("  ", name)
-  print("    shape: ", output.numpy().shape)
-  print("    min: ", output.numpy().min())
-  print("    max: ", output.numpy().max())
-  print("    mean: ", output.numpy().mean())
+gradient_descent.optimization(content_image, style_image, extractor, style_targets, content_targets, style_layers, content_layers,epochs=2, steps_per_epoch=10)
