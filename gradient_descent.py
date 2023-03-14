@@ -19,8 +19,12 @@ import image_statistics
 import loss_function
 import utils
 
-"""This File will compute the Gradient Descent to update the image to improve the loss given by loss_function.
-  The method optimization will compute the output image. 
+"""
+This File will compute the Gradient Descent to update the image to improve the loss given by loss_function.
+  The method optimization will compute the output image given the content and style image and the hyperparameters that we have 
+   tested to understand their  effect in the Style Transfer problem. 
+
+
 """
 
 
@@ -44,7 +48,7 @@ def train_step(image, opt, extractor, style_targets, content_targets, style_weig
   opt.apply_gradients([(grad, image)])
   image.assign(clip_0_1(image))
 
-def optimization(init_image,content_image, style_image,  style_layers, content_layers,epochs=5, steps_per_epoch=100):
+def optimization(init_image,content_image, style_image, lam, style_layers, content_layers,epochs=5, steps_per_epoch=100):
     """
     This is the function that will take an input image and will generate an output image that will minimize the loss function,
     parametrized by some weightening.
@@ -64,8 +68,8 @@ def optimization(init_image,content_image, style_image,  style_layers, content_l
     content_targets = extractor(content_image)['content']
     image = tf.Variable(init_image) #Normally, we will begin by the content_image
     opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
-    style_weight=1e-2
-    content_weight=1e4
+    style_weight=lam*(1e-2/1e4)
+    content_weight=1
 
     start = time.time()
     step = 0
