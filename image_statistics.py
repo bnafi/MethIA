@@ -25,6 +25,14 @@ Network pretrained for image classification (VGG19) in ImageNet dataset. With so
 we are able to extract some high-level (Content) and low-level (Style) from the image to compute image statistics.
 
 We use methods from aux_image_statistics to compute the loss.
+See also
+----------
+image_statistics
+
+References
+----------
+https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf 
+
 """
 
 class StyleContentModel(tf.keras.models.Model):
@@ -71,8 +79,7 @@ class StyleContentModel(tf.keras.models.Model):
   def call(self, inputs):
     """
     This function returns the content layer output and style layers outputs given in the initialization of the class. 
-    The style outputs are also treated with the gram matrix to extract correlations between different layers, as explained in
-    https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf 
+    The style outputs are also treated with the gram matrix to extract correlations between different layers.
 
     Parameters
     ----------
