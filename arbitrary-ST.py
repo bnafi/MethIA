@@ -18,8 +18,8 @@ import time
 import functools
 import utils
 """
-This class is only used to show how the embedding offered by the trained Inception_V3(the style predict network) fasten the style transfer 
-making it possible to use the Style Transfer in real time.
+This class is only used to show how the embedding offered by the pretrained Inception_V3(the style predict network) fasten the style transfer 
+making it possible to use the Style Transfer in real time. 
 
 This module implements the algorithm proposed at https://arxiv.org/abs/1705.06830
 """

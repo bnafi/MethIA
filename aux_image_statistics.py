@@ -16,9 +16,11 @@ import time
 import functools
 
 """
-This is an auxiliary class for the image_statistics class that computes the loss. 
+This is an auxiliary class for the image_statistics class that extracts information from the images to compute the loss. 
 
-We can obtain this pretrained CNN from tf.keras. 
+We can obtain this pretrained VGG19 from tf.keras. It is a Deep Convolutional Neural Network trained in the Imagenet dataset with
+purpose of classification, hence it is able to extract information from the images that is different from the per-pixel information
+that can not extract content or style information. 
 """
 def vgg_layers_names():
 

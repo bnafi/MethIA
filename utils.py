@@ -15,6 +15,9 @@ import PIL.Image
 import time
 import functools
 
+"""
+This class is used for image treatment and plotting.
+"""
 
 def tensor_to_image(tensor):
   """

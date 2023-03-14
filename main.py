@@ -39,4 +39,7 @@ style_layers = ['block1_conv1',
                 'block5_conv1']
 content_layers = ['block5_conv2']
 
+#This function will return the output image. 
+# #We notice that the first parameter of the function is the initial image for the optimization(we have chosen the content_image to have
+# good visual results with not many steps)
 gradient_descent.optimization(content_image,content_image, style_image, style_layers, content_layers,epochs=2, steps_per_epoch=10)

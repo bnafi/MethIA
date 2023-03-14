@@ -15,8 +15,9 @@ import PIL.Image
 import time
 import functools
 import aux_image_statistics
+
 """
-This File is used to compute the Loss Function for our Deep Convolutional Neural Network. 
+This File is used to compute the Extractor that will extract style and content image statistics using a Deep Convolutional Neural Network. 
 
 We have to notice that this Loss Function is not well defined as it could be in classification for example. This is 
 because it is difficult to define the Style and Content of an image. The idea is to use a Deep Convolution Neural 
@@ -29,7 +30,10 @@ We use methods from aux_image_statistics to compute the loss.
 class StyleContentModel(tf.keras.models.Model):
   """
   We create a Class that inherits from models of keras. For the initialization we have to provide a list with the name of the 
-  style and content layers (VGG19 layers) from which we want to extract the information.
+  style and content layers (VGG19 layers) from which we want to extract the information. The valid names will be given in the
+  streamlit. 
+  ---Parameters
+  ---Attributes
   """
   def __init__(self, style_layers, content_layers):
     super(StyleContentModel, self).__init__()
@@ -40,6 +44,11 @@ class StyleContentModel(tf.keras.models.Model):
     self.vgg.trainable = False
 
   def call(self, inputs):
+    """
+    This function returns the content layer output and style layers outputs given in the initialization of the class. 
+    The style outputs are also treated with the gram matrix to extract correlations between different layers, as explained in
+    https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf 
+    """
     "Expects float input in [0,1]"
     inputs = inputs*255.0
     preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)

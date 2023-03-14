@@ -21,6 +21,13 @@ import aux_image_statistics
 This File is used to compute the Loss Function for our Deep Convolutional Neural Network. 
 To compute this loss we have to extract information from the content image and the style image. Therefore, we will
 use the image_statistics to extract it.
+
+This loss is better explained in the report of this project and in the references, mainly 
+Leon A.Gatys, Alexander S.Ecker, and Matthias Bethge. Image style transfer using convolutional neural networks.
+DOI: 10.1109/CVPR.2016.265, June 27-30, 2016
+and 
+Karen Simonyan and Andrew Zisserman. Very deep convolutional networks for large-scale image recognition. In
+Arxiv:1409.1556, August 28, 2017.
 """
 
 def style_content_loss(outputs, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers):
