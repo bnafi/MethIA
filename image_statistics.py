@@ -32,10 +32,35 @@ class StyleContentModel(tf.keras.models.Model):
   We create a Class that inherits from models of keras. For the initialization we have to provide a list with the name of the 
   style and content layers (VGG19 layers) from which we want to extract the information. The valid names will be given in the
   streamlit. 
-  ---Parameters
-  ---Attributes
+   Attributes
+    ----------
+    vgg : tf.keras.Model
+        The vgg layers(style and content)
+    style_layers: string list
+        The List of vgg layers from which we will compute the style loss
+    content_layers: string 
+        The vgg layer from which we will compute the content loss
+    num_style_layers: int
+        Number of style layers
+    vgg.trainable : boolean
+        If the vgg is trainable or we use the pretrained one
+
+    Methods
+    -------
+    __init__(style_layers, content_layers)
+        It instantiates the class with the given layers to extract information
+    call(inputs)
+        It returns the outputs of the vgg after passing inputs, treated to afterward compute the loss
   """
   def __init__(self, style_layers, content_layers):
+    """
+    __init__(style_layers, content_layers)
+    Parameters
+    ----------
+        style_layers : string list
+        content_layers : string list
+
+    """
     super(StyleContentModel, self).__init__()
     self.vgg = aux_image_statistics.vgg_layers(style_layers + content_layers)
     self.style_layers = style_layers
@@ -48,8 +73,19 @@ class StyleContentModel(tf.keras.models.Model):
     This function returns the content layer output and style layers outputs given in the initialization of the class. 
     The style outputs are also treated with the gram matrix to extract correlations between different layers, as explained in
     https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf 
+
+    Parameters
+    ----------
+    inputs : image
+        It is the image that we want to pass through the information extractor.
+    Returns
+    -------
+    Dict
+        This dictionary will have as keys the content and style, with a dictionary as value. This dictionarys 
+        contain the name of the layer and the output computed.
+        
     """
-    "Expects float input in [0,1]"
+    #Expects float input in [0,1]
     inputs = inputs*255.0
     preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
     outputs = self.vgg(preprocessed_input)#It is the style and content extractor

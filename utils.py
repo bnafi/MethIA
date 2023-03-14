@@ -21,8 +21,17 @@ This class is used for image treatment and plotting.
 
 def tensor_to_image(tensor):
   """
+  tensor_to_image(tensor)
+
   Given a tensor it returns the image.
 
+      Parameters
+      ----------
+          tensor : Tensor
+
+      Returns
+      -------
+          Pil.Image
   """
   tensor = tensor*255
   tensor = np.array(tensor, dtype=np.uint8)
@@ -33,9 +42,20 @@ def tensor_to_image(tensor):
 
 def load_img(path_to_img):
   """
+  load_img(path_to_img)
+
   Given the path to an image, it loads the image.
 
   The maximum size of the image is 512 pixels.
+      Parameters
+    ----------
+        path_to_img : string
+          It is an URL
+
+    Returns
+    -------
+        Tensor
+        It returns the image.
   """
   max_dim = 512
   img = tf.io.read_file(path_to_img)
@@ -54,7 +74,13 @@ def load_img(path_to_img):
 
 def imshow(image, title=None):
   """
+  imshow(image, title)
   It is used to show the image.
+      Parameters
+      ----------
+          image : Tensor
+          title : string, optional
+
   """
   if len(image.shape) > 3:
     image = tf.squeeze(image, axis=0)

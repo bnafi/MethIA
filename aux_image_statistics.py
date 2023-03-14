@@ -24,7 +24,10 @@ that can not extract content or style information.
 """
 def vgg_layers_names():
 
-    """This function is only informative to extract the names of the VGG19 Layers"""
+    """
+    vgg_layers_names()
+    This function is only informative to extract the names of the VGG19 Layers
+    """
     #We will not use the last activation function because we do not want to do classification, only use intermediate layers.
     vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
     print("VGG19 Layers: ")
@@ -32,7 +35,18 @@ def vgg_layers_names():
         print(layer.name)
 
 def vgg_layers(layer_names):
-  """ Given the layer_names, it loads a VGG19 network and it will return the output of the layer_names."""
+  """ 
+  vgg_layers(layer_names)
+  Given the layer_names, it loads a VGG19 network and it will return the output of the layer_names.
+      Parameters
+      ----------
+        layer_names : string list
+
+      Returns
+     -------
+        tf.keras.Model
+        It returns the vgg layers.
+  """
   # Load our model. Load pretrained VGG, trained on imagenet data
   vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
   vgg.trainable = False
@@ -45,8 +59,13 @@ def vgg_layers(layer_names):
 
 def vgg_layers_stat(image, layers):
     """
+    vgg_layers_stat(image, layers)
     This function will provide the shape, min,max and mean of the output layers ("layers") of the VGG19 when we 
     enter "image". 
+        Parameters
+    ----------
+        image : Tensor
+        layers : string list
     """
     style_extractor = vgg_layers(layers)
     style_outputs = style_extractor(image*255)
@@ -62,7 +81,16 @@ def vgg_layers_stat(image, layers):
 
 def gram_matrix(input_tensor):
   """
+  gram_matrix(input_tensor)
   It is used to compute the Style Loss (It computes correlations and is able to extract Low-Level image information)
+      Parameters
+    ----------
+        input_tensor : Tensor
+
+    Returns
+    -------
+        Tensor
+        It returns the computed gram matrix.
   """
   result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
   input_shape = tf.shape(input_tensor)

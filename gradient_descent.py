@@ -30,14 +30,41 @@ This File will compute the Gradient Descent to update the image to improve the l
 
 
 def clip_0_1(image):
-  """To keep the pixels between 0 and 1"""
+  """
+  clip_0_1(image):
+
+  To keep the pixels between 0 and 1
+
+  Parameters
+  ----------
+    image : Tensor
+
+  Returns
+  -------
+    Tensor
+    It returns the clipped tensor.
+  """
   return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
 @tf.function()
 def train_step(image, opt, extractor, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers):
   """
-  This function will compute a train step used in the optimization. 
+  This function will compute a train step used in the optimization. It makes all the changes directly in the image.
+
+  Parameters
+  ----------
+    image : Tensor
+    opt : tf.optimizer
+    extractor : StyleContentModel
+    style_targets : Tensor
+    content_targets : Tensor
+    style_weight : float
+    content_weight : float
+    style_layers : string list
+    content_layers : string list
+
+  
   """
   #We use GradientTape to update the image
   with tf.GradientTape() as tape:
@@ -51,15 +78,26 @@ def train_step(image, opt, extractor, style_targets, content_targets, style_weig
 def optimization(init_image,content_image, style_image, lam, style_layers, content_layers,epochs=5, steps_per_epoch=100):
     """
     This is the function that will take an input image and will generate an output image that will minimize the loss function,
-    parametrized by some weightening.
+    parametrized by some weightening. init_image is the first image from where we will begin (Normally content_image)
+    The content_image is the image from which we will compute the content loss. The style_image is the image from which we will 
+    compute the style loss. The style_layers are the VGG19 layers that we will use to compute the style loss and the content_layers
+     are the VGG19 layers that we will use to compute the content loss
 
-    Inputs:
-    -init_image: the first image from where we will begin. (Normally content_image)
-    -content_image: the image from which we will compute the content loss.
-    -style_image:the image from which we will compute the style loss.
-    -style_layers: the VGG19 layers that we will use to compute the style loss
-    -content_layers: the VGG19 layers that we will use to compute the content loss
-    
+    Parameters
+    ----------
+      init_image : Tensor
+      content_image : Tensor
+      style _image : Tensor
+      lam : float
+      style_layers : string list
+      content_layers : string list
+      epoch : int, optional
+      steps_per_epoch : int, optional
+
+    Returns
+     -------
+      Tensor
+        It returns the optimized image.
 
     """
     #extractor: it is the network that will extract the style and the content from the images

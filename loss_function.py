@@ -32,8 +32,25 @@ Arxiv:1409.1556, August 28, 2017.
 
 def style_content_loss(outputs, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers):
     """
+    style_content_loss(outputs, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers)
+
     The outputs are given by the image_statistics and we mix content and style loss to penalize and get a compromise. They are 
     weighted by style_weight and content_weight. 
+
+        Parameters
+    ----------
+        outputs : Dictionary
+        style_targets : Tensor
+        content_targets : Tensor
+        style_weight : float
+        content_weight : float
+        style_layers : string list
+        content_layers : string list
+
+    Returns
+    -------
+        float
+        It returns the loss.
     """
     style_outputs = outputs['style']
     content_outputs = outputs['content']

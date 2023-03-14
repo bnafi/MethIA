@@ -20,12 +20,25 @@ import utils
 """
 This class is only used to show how the embedding offered by the pretrained Inception_V3(the style predict network) fasten the style transfer 
 making it possible to use the Style Transfer in real time. 
+To use this class it is necessary to download tensorflow_hub.
 
 This module implements the algorithm proposed at https://arxiv.org/abs/1705.06830
 """
 def fast_stylization(content_image, style_image):
     """
+    fast_stylization(content_image, style_image):
+    
     It takes the content_image and the Style_image and it computes the result through the network given at tf_hub.
+    Parameters
+    ----------
+        content_image : Tensor
+        style_image : Tensor
+
+    Returns
+    -------
+        Tensor
+        It returns the final image.
+
     """
     hub_model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
     stylized_image = hub_model(tf.constant(content_image), tf.constant(style_image))[0]
