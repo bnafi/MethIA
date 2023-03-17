@@ -81,7 +81,7 @@ st.write("On peut alors commencer l'entraînement du modèle. Spécifiez les par
 epochs = st.slider("Nombre d'epochs",0,10,3)
 steps_per_epoch = st.slider("Nombre de steps par epoch",0,100,10)
 
-gradient_descent.optimization(content_image,content_image, style_image, lam, style_layers, content_layers,epochs=2, steps_per_epoch=10)
+gradient_descent.optimization(content_image,content_image, style_image, lam, style_layers, content_layers,epochs, steps_per_epoch)
 
 st.write("On peut aussi voir le transfert de style par fast stylization à l'aide du module hub :")
 st.image(arbitrary_ST.fast_stylization(content_image,style_image), caption = "Image stylisée obtenue avec hub")
