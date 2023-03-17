@@ -3,13 +3,6 @@ import tensorflow as tf
 # Load compressed models from tensorflow_hub
 os.environ['TFHUB_MODEL_LOAD_FORMAT'] = 'COMPRESSED'
 
-import IPython.display as display
-
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-mpl.rcParams['figure.figsize'] = (12, 12)
-mpl.rcParams['axes.grid'] = False
-
 import numpy as np
 import time
 import PIL.Image
@@ -18,6 +11,7 @@ import functools
 import image_statistics
 import loss_function
 import utils
+import streamlit as st
 
 """
 This File will compute the Gradient Descent to update the image to improve the loss given by loss_function.
@@ -75,8 +69,8 @@ def train_step(image, opt, extractor, style_targets, content_targets, style_weig
   opt.apply_gradients([(grad, image)])
   image.assign(clip_0_1(image))
 
-def optimization(init_image,content_image, style_image, lam, style_layers, content_layers,epochs=5, steps_per_epoch=100):
-    """
+def optimization(init_image,content_image, style_image, lam, style_layers, content_layers,epochs=2, steps_per_epoch=10):    
+  """
     This is the function that will take an input image and will generate an output image that will minimize the loss function,
     parametrized by some weightening. init_image is the first image from where we will begin (Normally content_image)
     The content_image is the image from which we will compute the content loss. The style_image is the image from which we will 
@@ -99,27 +93,23 @@ def optimization(init_image,content_image, style_image, lam, style_layers, conte
       Tensor
         It returns the optimized image.
 
-    """
-    #extractor: it is the network that will extract the style and the content from the images
-    extractor = image_statistics.StyleContentModel(style_layers, content_layers)
-    style_targets = extractor(style_image)['style']
-    content_targets = extractor(content_image)['content']
-    image = tf.Variable(init_image) #Normally, we will begin by the content_image
-    opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
-    style_weight=lam*(1e-2/1e4)
-    content_weight=1
+  """
+  #extractor: it is the network that will extract the style and the content from the images
+  extractor = image_statistics.StyleContentModel(style_layers, content_layers)
+  style_targets = extractor(style_image)['style']
+  content_targets = extractor(content_image)['content']
+  image = tf.Variable(init_image) #Normally, we will begin by the content_image
+  opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
+  style_weight=lam*(1e-2/1e4)
+  content_weight=1
 
-    start = time.time()
-    step = 0
-    for n in range(epochs):
-        for m in range(steps_per_epoch):
-            step += 1
-            train_step(image, opt, extractor, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers)
-            print(".", end='', flush=True)
-    display.clear_output(wait=True)
-    display.display(utils.tensor_to_image(image))#This is not for the terminal, it is to use it in streamlit or in jupyter to show the output image
-    print("Train step: {}".format(step))
-
-    end = time.time()
-    print("Total time: {:.1f}".format(end-start))
-    return utils.tensor_to_image(image)
+  start = time.time()
+  step = 0
+  for n in range(epochs):
+    for m in range(steps_per_epoch):
+      step += 1
+      st.write(m)
+      train_step(image, opt, extractor, style_targets, content_targets, style_weight, content_weight, style_layers, content_layers)
+    st.image(utils.tensor_to_image(image))
+    st.write("Train step :",step)
+  return 
