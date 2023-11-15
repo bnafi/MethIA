@@ -1,4 +1,4 @@
-# Artificial Intelligence Methods II: Style Transfer. 
+# Artificial Intelligence Methods II: Style Transfer. (*March 2023*)
 
 This repository contains the Style Transfer project for the subject "AI Methods II" of the first year of Master of "Mathematics and AI" of Paris-Saclay University.
 
